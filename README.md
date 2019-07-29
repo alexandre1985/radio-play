@@ -33,6 +33,15 @@ The rest of the dependencies you may already have on your Linux OS, which are:
 
 ## Installation
 
+### Easy way
+
+Open a terminal window (optionally `cd` to a `PATH` directory) and do:
+```
+wget https://raw.githubusercontent.com/alexandre1985/radio-play/master/radio-play && chmod +x radio-play
+```
+
+### Complete explanation
+
 Just download `radio-play` script. You may want to put the script in a `$PATH` directory (for running `radio-play` without needing `radio-play` full path for its execution).
 
 After you have made the download, don't forget to give `radio-play` executable permissions. You can give those by using the command `chmod +x radio-play`.
