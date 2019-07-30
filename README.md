@@ -54,7 +54,7 @@ If `XDG_CONFIG_HOME` variable is set, `$XDG_CONFIG_HOME/radio-play/` will be the
 
 ### Configuration Files
 
-There are two configuration files for this script, `$HOME/.config/radio-play/main.conf` and `$HOME/.config/radio-play/radios.conf`.  
+There are two configuration files for this script, that live inside the [Configuration Directory](###configuration-directory) (which probably is located on `$HOME/.config/radio-play/`). They are `main.conf` and `radios.conf`.  
 
 #### main.conf
 
