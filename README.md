@@ -35,7 +35,7 @@ The rest of the dependencies you may already have on your Linux OS, which are:
 
 ### Easy way
 
-Open a terminal window (optionally `cd` to a `PATH` directory) and do:
+Open a terminal window (optionally `cd` to a `$PATH` directory) and do:
 ```
 wget https://raw.githubusercontent.com/alexandre1985/radio-play/master/radio-play && chmod +x radio-play
 ```
@@ -54,7 +54,7 @@ If `XDG_CONFIG_HOME` variable is set, `$XDG_CONFIG_HOME/radio-play/` will be the
 
 ### Configuration Files
 
-There are two configuration files for this script, that live inside the [Configuration Directory](###configuration-directory) (which probably is located on `$HOME/.config/radio-play/`). They are `main.conf` and `radios.conf`.  
+There are two configuration files for this script, that live inside the [Configuration Directory](#configuration-directory) (which probably is located on `$HOME/.config/radio-play/`). They are `main.conf` and `radios.conf`.  
 
 #### main.conf
 
