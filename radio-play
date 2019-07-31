@@ -98,7 +98,7 @@ DEPS+=" $(echo ${PLAYER_COMMAND} | ${CUT} -d' ' -f1)"
 
 
 for dep in $DEPS; do
-	! ${WHICH} $(${BASENAME} ${dep}) > /dev/null 2>&1 && echo -e "ERROR: command ${dep} is missing.\nYou need to install it to run this program." && exit 4
+	! ${WHICH} $(${BASENAME} ${dep}) > /dev/null 2>&1 && echo -e "ERROR: command ${dep} can't be found.\nYou may need to install ${dep} to make this program work." && exit 4
 	if [ $(${DIRNAME} ${dep}) != . ]; then
 		[ ! -f ${dep} ] && echo "ERROR: ${dep} is not a valid file in ${CONFIG_FILE_MAIN}." && exit 9
 	fi
