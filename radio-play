@@ -51,6 +51,7 @@ WC=wc
 TOUCH=touch
 CURL=curl
 HEAD=head
+RM=rm
 
 # if you dont set the fullpath in any of the variables above (except YOUTUBE_DL), you have to define all of the variables directory names in the variable PROGRAMS_PATH below
 
@@ -65,11 +66,6 @@ sanitize_and_import_conf_file() {
 	#source <( ${EGREP} '[[:alnum:]]=[\/"_'"'--[:alnum:]]" $1 ) # this is equivalent, not as general. works today and may work for the future
 }
 
-if [ "$1" = "--recreate" ]; then
-	${RM} -Rf ${SCRIPT_CONFIG_DIR}/*
-	create_config_main_file
-	exit 0
-fi
 
 [ ! -f ${CONFIG_FILE_MAIN} ] && create_config_main_file
 
@@ -227,7 +223,11 @@ turn_on_station() {
 	fi
 
 	add_station_record ${2:-${1}}
-	play_no_video $1
+	if [ -z ${VIDEO+x} ]; then
+		play_no_video $1
+	else
+		play $1
+	fi
 }
 
 is_string_a_url() {
@@ -244,20 +244,43 @@ is_url_online() {
 
 # MAIN
 
+## argument processing
+
+while [ ! $# -eq 0 ]
+do
+	case "$1" in
+		--help | -h)
+			print_help
+			exit 0
+			;;
+		--recreate)
+			${RM} -Rf ${SCRIPT_CONFIG_DIR}/*
+			create_config_main_file
+			exit 0
+			;;
+		--video)
+			VIDEO=y
+			;;
+	esac
+	RESOURCE=$1
+	shift
+done
+
+
 ## if argument is a url, set it as the argument, else alias (from $CONFIG_FILE_RADIOS) substitution
-is_string_a_url $1 && LINK=$1 || LINK=${!1}
+is_string_a_url ${RESOURCE} && LINK=${RESOURCE} || LINK=${!RESOURCE}
 
 if [ -z ${LINK} ]; then
-	echo -e "ERROR: the alias '$1' is not set in the ${CONFIG_FILE_RADIOS} file.\n\nYou may want to add '$1=http://some-radio-stream-URL/...' to this file. It also accepts Youtube Live URLS! ( for example, http://www.youtube.com/watch?v=hHW1oY26kxQ )"
+	echo -e "ERROR: the alias '${RESOURCE}' is not set in the ${CONFIG_FILE_RADIOS} file.\n\nYou may want to add '${RESOURCE}=http://some-radio-stream-URL/...' to this file. It also accepts Youtube Live URLS! ( for example, http://www.youtube.com/watch?v=hHW1oY26kxQ )"
 	exit 7
 fi
 
 if ! is_string_a_url ${LINK}; then
-	echo "ERROR: the argument '$1' corresponds to '${LINK}' which is not a valid link."
+	echo "ERROR: the argument '${RESOURCE}' corresponds to '${LINK}' which is not a valid link."
 	exit 8
 fi
 
-STATION=$1
+STATION=${RESOURCE}
 
 ## check if url is not online
 
