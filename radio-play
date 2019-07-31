@@ -8,7 +8,6 @@ set -e
 
 MKDIR=/usr/bin/mkdir # IMPORTANT! MKDIR executable command path (must be correctly set)
 EGREP=/usr/bin/egrep # IMPORTANT! EGREP executable command path (must be correctly set)
-RM=/usr/bin/rm # IMPORTANT! RM executable command path (must be correctly set)
 
 CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
 
@@ -262,7 +261,7 @@ do
 			exit 0
 			;;
 		--recreate)
-			${RM} -Rf ${SCRIPT_CONFIG_DIR}/*
+			${RM} -f ${CONFIG_FILE_MAIN}
 			create_config_main_file
 			exit 0
 			;;
