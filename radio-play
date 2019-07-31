@@ -8,6 +8,7 @@ set -e
 
 MKDIR=/usr/bin/mkdir # IMPORTANT! MKDIR executable command path (must be correctly set)
 EGREP=/usr/bin/egrep # IMPORTANT! EGREP executable command path (must be correctly set)
+RM=/usr/bin/rm # IMPORTANT! RM executable command path (must be correctly set)
 
 CONFIG_HOME=${XDG_CONFIG_HOME:-${HOME}/.config}
 
@@ -64,7 +65,14 @@ sanitize_and_import_conf_file() {
 	#source <( ${EGREP} '[[:alnum:]]=[\/"_'"'--[:alnum:]]" $1 ) # this is equivalent, not as general. works today and may work for the future
 }
 
+if [ "$1" = "--recreate" ]; then
+	${RM} -Rf ${SCRIPT_CONFIG_DIR}/*
+	create_config_main_file
+	exit 0
+fi
+
 [ ! -f ${CONFIG_FILE_MAIN} ] && create_config_main_file
+
 
 sanitize_and_import_conf_file ${CONFIG_FILE_MAIN}
 
