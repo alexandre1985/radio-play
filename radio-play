@@ -242,7 +242,17 @@ is_url_online() {
 	return $?
 }
 
+print_help() {
+	NAME=$(${BASENAME} $0)
+	echo -e "Usage:\n${NAME} [--help|-h] [--recreate]\n${NAME} [--video] URI\n\nThe URI can, instead, be a ${NAME}'s alias (${NAME} aliases are defined in the ${CONFIG_FILE_RADIOS} file)."
+	exit 1
+}
+
 # MAIN
+
+## no argument
+
+[ $# -eq 0 ] && print_help
 
 ## argument processing
 
