@@ -86,7 +86,7 @@ ${TOUCH} ${RECORD_FILE}
 # CHECK FOR PROGRAMS DEPENDENCIES
 
 ## all the commands variables above (commands dependencies) for this script
-DEPS="${YOUTUBE_DL} ${MKDIR} ${EGREP} ${DIRNAME} ${BASENAME} ${CUT} ${WHICH} ${PKILL} ${SED} ${WC} ${TOUCH} ${CURL} ${HEAD} ${NOTIFY_SEND}"
+DEPS="${YOUTUBE_DL} ${MKDIR} ${EGREP} ${DIRNAME} ${BASENAME} ${CUT} ${WHICH} ${PKILL} ${SED} ${WC} ${TOUCH} ${CURL} ${HEAD} ${RM} ${NOTIFY_SEND}"
 
 ## add to DEPS the PLAYER_COMMAND
 DEPS+=" $(echo ${PLAYER_COMMAND} | ${CUT} -d' ' -f1)"
