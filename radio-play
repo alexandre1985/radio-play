@@ -109,11 +109,11 @@ escape() {
 }
 
 play() {
-	${PLAYER_COMMAND} $1 > /dev/null 2>&1 &
+	( ${PLAYER_COMMAND} $1 && remove_station_record ) > /dev/null 2>&1 &
 }
 
 play_no_video() {
-	${PLAYER_COMMAND} ${PLAYER_NO_VIDEO_FLAG} $1 > /dev/null 2>&1 &
+	( ${PLAYER_COMMAND} ${PLAYER_NO_VIDEO_FLAG} $1 && remove_station_record ) > /dev/null 2>&1 &
 }
 
 stop_play() {
@@ -195,10 +195,8 @@ is_station_playing() {
 
 
 remove_station_record() {
-	if does_station_record_exist $1 ; then
-		#${SED} -i -e "s|$1||g" ${RECORD_FILE}
-		${SED} -i 'd' ${RECORD_FILE} # deletes all the lines of $RECORD_FILE
-	fi
+	#${SED} -i -e "s|$1||g" ${RECORD_FILE}
+	${SED} -i 'd' ${RECORD_FILE} # deletes all the lines of $RECORD_FILE
 }
 
 turn_off_station() {
