@@ -15,19 +15,20 @@ Some dependencies are needed...
 
 The rest of the dependencies you may already have on your Linux OS, which are:
 
-* `notify-send`
 * `mkdir`
-* `egrep`
-* `dirname`
+* `sed`
 * `basename`
+* `dirname`
 * `cut`
 * `which`
 * `pkill`
-* `sed`
+* `grep`
 * `wc`
 * `touch`
 * `curl`
 * `head`
+* `rm`
+* `notify-send`
 
 * the rest are built-in bash shell commands such as `echo`, `exit`, `return`, `test`/`[`, `printf` and control flow bash constructs (if, then. else, fi, ... - well check the damn source code if you want to know more :smile: ! :sunrise_over_mountains: )
 
