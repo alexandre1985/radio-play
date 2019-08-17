@@ -121,11 +121,11 @@ escape() {
 }
 
 play() {
-	( ${PLAYER_COMMAND} $1 && remove_station_record ) > /dev/null 2>&1 &
+	( ${PLAYER_COMMAND} "$1" && remove_station_record ) > /dev/null 2>&1 &
 }
 
 play_no_video() {
-	( ${PLAYER_COMMAND} ${PLAYER_NO_VIDEO_FLAG} $1 && remove_station_record ) > /dev/null 2>&1 &
+	( ${PLAYER_COMMAND} ${PLAYER_NO_VIDEO_FLAG} "$1" && remove_station_record ) > /dev/null 2>&1 &
 }
 
 stop_play() {
@@ -213,7 +213,7 @@ remove_station_record() {
 
 turn_off_station() {
 	remove_station_record ${2:-${1}}
-	stop_play $1
+	stop_play "$1"
 }
 
 add_station_record() {
@@ -234,9 +234,9 @@ turn_on_station() {
 
 	add_station_record ${2:-${1}}
 	if [ -z ${VIDEO+x} ]; then
-		play_no_video $1
+		play_no_video "$1"
 	else
-		play $1
+		play "$1"
 	fi
 }
 
@@ -247,6 +247,10 @@ is_string_a_url() {
 	[[ $1 =~ ${REGEX} ]] && return 0 || return 1
 }
 
+is_string_a_file() {
+	[[ -f $1 ]] && return 0 || return 1
+}
+
 is_url_online() {
 	${CURL} -s --head $1 | ${HEAD} -n 1 | ${GREP} "HTTP/1.[01] [23].." > /dev/null
 	return $?
@@ -255,7 +259,7 @@ is_url_online() {
 print_help() {
 	NAME=$(${BASENAME} $0)
 	echo -e "Usage:\n${NAME} [--help|-h] [--recreate]\n${NAME} [--video] URI\n\nThe URI can, instead, be a ${NAME}'s alias (${NAME} aliases are defined in the ${CONFIG_FILE_RADIOS} file)."
-	exit 1
+	exit 0
 }
 
 
@@ -290,19 +294,21 @@ done
 
 
 ## if argument is a url, set it as the argument, else alias (from $CONFIG_FILE_RADIOS) substitution
-is_string_a_url ${RESOURCE} && LINK=${RESOURCE} || LINK=${!RESOURCE}
+( is_string_a_url "${RESOURCE}" || is_string_a_file "${RESOURCE}" ) && LINK="${RESOURCE}" || LINK="${!RESOURCE}"
 
-if [ -z ${LINK} ]; then
+if [ -z "${LINK}" ]; then
 	echo -e "ERROR: the alias '${RESOURCE}' is not set in the ${CONFIG_FILE_RADIOS} file.\n\nYou may want to add '${RESOURCE}=http://some-radio-stream-URL/...' to this file. It also accepts Youtube Live URLS! ( for example, http://www.youtube.com/watch?v=hHW1oY26kxQ )"
 	exit 7
 fi
 
-if ! is_string_a_url ${LINK}; then
-	echo "ERROR: the argument '${RESOURCE}' corresponds to '${LINK}' which is not a valid link."
+
+if ( ! is_string_a_url "${LINK}" ) && ( ! is_string_a_file "${LINK}" ) ; then
+	echo "ERROR: the argument '${RESOURCE}' corresponds to '${LINK}' which is not a valid link or an existing file."
 	exit 8
 fi
 
-STATION=${RESOURCE}
+
+STATION="${RESOURCE}"
 
 
 ## check if url is not online
@@ -312,13 +318,13 @@ STATION=${RESOURCE}
 
 ## play station
 
-if is_station_playing ${STATION} ; then
-	turn_off_station ${LINK} ${STATION}
+if is_station_playing "${STATION}" ; then
+	turn_off_station "${LINK}" "${STATION}"
 	notificate "STOP" "${STATION}" 
 	
 	exit 0
 else
-	turn_on_station ${LINK} ${STATION}
+	turn_on_station "${LINK}" "${STATION}"
 	notificate "START" "${STATION}" 
 
 	exit 0
