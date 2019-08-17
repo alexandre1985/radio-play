@@ -25,7 +25,7 @@ RECORD_FILE=/tmp/radio-play-station
 ${MKDIR} -p ${SCRIPT_CONFIG_DIR}
 
 create_config_main_file() {
-	printf 'PLAYER_COMMAND="/usr/bin/mpv --really-quiet"
+	printf 'PLAYER_COMMAND="/usr/bin/mpv --really-quiet --stop-playback-on-init-failure=yes"
 
 PLAYER_NO_VIDEO_FLAG=--no-video
 
@@ -121,11 +121,11 @@ escape() {
 }
 
 play() {
-	( ${PLAYER_COMMAND} "$1" && remove_station_record ) > /dev/null 2>&1 &
+	( ${PLAYER_COMMAND} "$1" && radio_ended "$2" ) > /dev/null 2>&1 &
 }
 
 play_no_video() {
-	( ${PLAYER_COMMAND} ${PLAYER_NO_VIDEO_FLAG} "$1" && remove_station_record ) > /dev/null 2>&1 &
+	( ${PLAYER_COMMAND} ${PLAYER_NO_VIDEO_FLAG} "$1" && radio_ended "$2" ) > /dev/null 2>&1 &
 }
 
 stop_play() {
@@ -176,6 +176,10 @@ notificate() {
 			MESSAGE="this radio has been stopped"
 			;;
 
+		END)
+			MESSAGE="this radio has ended successfully"
+			;;
+
 		ERROR_ALREADY_PLAYING)
 			TITLE="ERROR:"
 			MESSAGE="$(get_current_playing_station) radio is already playing"
@@ -205,10 +209,15 @@ is_station_playing() {
 	fi
 }
 
-
 remove_station_record() {
 	#${SED} -i -e "s|$1||g" ${RECORD_FILE}
 	${SED} -i 'd' ${RECORD_FILE} # deletes all the lines of $RECORD_FILE
+}
+
+radio_ended() {
+	remove_station_record
+	${RM} -f ${RECORD_FILE}
+	notificate "END" "${1}"
 }
 
 turn_off_station() {
@@ -234,9 +243,9 @@ turn_on_station() {
 
 	add_station_record ${2:-${1}}
 	if [ -z ${VIDEO+x} ]; then
-		play_no_video "$1"
+		play_no_video "$1" "$2"
 	else
-		play "$1"
+		play "$1" "$2"
 	fi
 }
 
