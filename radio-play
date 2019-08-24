@@ -22,7 +22,7 @@ RECORD_FILE=/tmp/radio-play-station
 
 ## preparing the smooth running of this script
 
-${MKDIR} -p ${SCRIPT_CONFIG_DIR}
+${MKDIR} -p "${SCRIPT_CONFIG_DIR}"
 
 create_config_main_file() {
 	printf 'PLAYER_COMMAND="/usr/bin/mpv --really-quiet --stop-playback-on-init-failure=yes"
@@ -54,7 +54,7 @@ NOTIFY_SEND=notify-send
 # if you dont set the fullpath in any of the variables above, you have to define all of the variables directories in the PROGRAMS_PATH variable that is below
 
 PROGRAMS_PATH="/usr/bin" # PATH OF THE DIRECTORY OF THE PROGRAMS ABOVE
-' > ${CONFIG_FILE_MAIN}
+' > "${CONFIG_FILE_MAIN}"
 
 	return 0
 }
@@ -67,18 +67,18 @@ sanitize_and_import_conf_file() {
 }
 
 
-[ ! -f ${CONFIG_FILE_MAIN} ] && create_config_main_file
+[ ! -f "${CONFIG_FILE_MAIN}" ] && create_config_main_file
 
 
-sanitize_and_import_conf_file ${CONFIG_FILE_MAIN}
+sanitize_and_import_conf_file "${CONFIG_FILE_MAIN}"
 
 
 PATH="${PROGRAMS_PATH}"
 
 
-[ -f ${CONFIG_FILE_RADIOS} ] && sanitize_and_import_conf_file ${CONFIG_FILE_RADIOS}
+[ -f "${CONFIG_FILE_RADIOS}" ] && sanitize_and_import_conf_file "${CONFIG_FILE_RADIOS}"
 
-${TOUCH} ${RECORD_FILE}
+${TOUCH} "${RECORD_FILE}"
 
 
 
@@ -97,17 +97,17 @@ PLAYER_DEP="$(echo ${PLAYER_COMMAND} | ${CUT} -d' ' -f1)"
 DEPS="${INTERNAL_DEPS} ${PLAYER_DEP} ${CONFIG_DEPS}"
 
 for dep in ${DEPS}; do
-	! ${WHICH} ${dep} > /dev/null 2>&1 && echo -e "ERROR: command ${dep} can't be found.\nYou may need to install ${dep} to make this program work." && exit 4
+	! ${WHICH} "${dep}" > /dev/null 2>&1 && echo -e "ERROR: command ${dep} can't be found.\nYou may need to install ${dep} to make this program work." && exit 4
 
 	PROGRAM_DIR=$(${DIRNAME} ${dep})
 	if [ ${PROGRAM_DIR} != . ]; then
-		[ ! -f ${dep} ] && echo "ERROR: ${dep} is not a valid file in ${CONFIG_FILE_MAIN}." && exit 9
+		[ ! -f "${dep}" ] && echo "ERROR: ${dep} is not a valid file in ${CONFIG_FILE_MAIN}." && exit 9
 	fi
 done
 
 # add automatically the dependecies that are set with a path
 for dep in ${CONFIG_DEPS}; do
-	PROGRAM_DIR=$(${DIRNAME} ${dep})
+	PROGRAM_DIR="$(${DIRNAME} ${dep})"
 	
 	[[ ${PROGRAM_DIR} = /* ]] && PATH+=":${PROGRAM_DIR}"
 done
@@ -117,7 +117,7 @@ done
 # FUNCTIONS
 
 escape() {
-	printf '%q' $1
+	printf '%q' "$1"
 }
 
 play() {
@@ -131,7 +131,10 @@ play_no_video() {
 stop_play() {
 	ESCAPED_INPUT="$(escape $1)"
 	
-	${PKILL} -9 -f "${ESCAPED_INPUT}" &
+	${PKILL} -PIPE -f "${ESCAPED_INPUT}" > /dev/null 2>&1 &
+
+	# echo $(jobs -rp)
+ #    wait $(jobs -rp) 2>/dev/null
 
 	# it needs return 0 because pkill doesnt return 0
 	return 0
@@ -139,12 +142,12 @@ stop_play() {
 
 capitalize() {
 	STRING="$1"
-	printf ${STRING^}
+	printf "${STRING^}"
 }
 
 get_current_playing_station() {
-	CURRENT_STATION=$(cat ${RECORD_FILE})
-	printf ${CURRENT_STATION}
+	CURRENT_STATION="$(cat ${RECORD_FILE})"
+	printf "${CURRENT_STATION}"
 }
 
 notificate_shell() {
@@ -161,7 +164,7 @@ notificate() {
 
 	TITLE="# "
 	if [ ! -z ${STATION} ];then
-		is_string_a_url ${STATION} && TITLE=${STATION} || TITLE+=$(capitalize ${STATION})
+		is_string_a_url "${STATION}" && TITLE="${STATION}" || TITLE+="$(capitalize ${STATION})"
 	fi
 
 	ICON="dialog-information"
@@ -197,12 +200,14 @@ notificate() {
 }	
 
 does_station_record_exist() {
-	ESCAPED_INPUT=$(escape $1)
-	${GREP} -qw ${ESCAPED_INPUT} ${RECORD_FILE} && return 0 || return 1
+	# ESCAPED_INPUT="$(escape $1)"
+	# ${GREP} -qw "${ESCAPED_INPUT}" "${RECORD_FILE}" && return 0 || return 1
+
+	${GREP} -qw "${1}" "${RECORD_FILE}" && return 0 || return 1
 }
 
 is_station_playing() {
-	if does_station_record_exist $1 ; then
+	if does_station_record_exist "$1" ; then
 		return 0
 	else
 		return 1
@@ -211,28 +216,28 @@ is_station_playing() {
 
 remove_station_record() {
 	#${SED} -i -e "s|$1||g" ${RECORD_FILE}
-	${SED} -i 'd' ${RECORD_FILE} # deletes all the lines of $RECORD_FILE
+	${SED} -i 'd' "${RECORD_FILE}" # deletes all the lines of $RECORD_FILE
 }
 
 radio_ended() {
 	remove_station_record
-	${RM} -f ${RECORD_FILE}
+	${RM} -f "${RECORD_FILE}"
 	notificate "END" "${1}"
 }
 
 turn_off_station() {
-	remove_station_record ${2:-${1}}
+	remove_station_record "${2:-${1}}"
 	stop_play "$1"
 }
 
 add_station_record() {
-	if ! does_station_record_exist $1 ; then
-		echo "$1" >> ${RECORD_FILE}
+	if ! does_station_record_exist "$1" ; then
+		echo "$1" >> "${RECORD_FILE}"
 	fi
 }
 
 is_radio_already_playing() {
-	(( $(${WC} -l < ${RECORD_FILE} ) >= 1 )) && return 0 || return 1
+	(( $(${WC} -l < "${RECORD_FILE}" ) >= 1 )) && return 0 || return 1
 }
 
 turn_on_station() {
@@ -257,16 +262,16 @@ is_string_a_url() {
 }
 
 is_string_a_file() {
-	[[ -f $1 ]] && return 0 || return 1
+	[[ -f "$1" ]] && return 0 || return 1
 }
 
 is_url_online() {
-	${CURL} -s --head $1 | ${HEAD} -n 1 | ${GREP} "HTTP/1.[01] [23].." > /dev/null
+	${CURL} -s --head "$1" | ${HEAD} -n 1 | ${GREP} "HTTP/1.[01] [23].." > /dev/null
 	return $?
 }
 
 print_help() {
-	NAME=$(${BASENAME} $0)
+	NAME="$(${BASENAME} $0)"
 	echo -e "Usage:\n${NAME} [--help|-h] [--recreate]\n${NAME} [--video] URI\n\nThe URI can, instead, be a ${NAME}'s alias (${NAME} aliases are defined in the ${CONFIG_FILE_RADIOS} file)."
 	exit 0
 }
@@ -289,7 +294,7 @@ do
 			exit 0
 			;;
 		--recreate)
-			${RM} -f ${CONFIG_FILE_MAIN}
+			${RM} -f "${CONFIG_FILE_MAIN}"
 			create_config_main_file
 			exit 0
 			;;
@@ -297,7 +302,7 @@ do
 			VIDEO=y
 			;;
 	esac
-	RESOURCE=$1
+	RESOURCE="$1"
 	shift
 done
 
@@ -326,6 +331,7 @@ STATION="${RESOURCE}"
 
 
 ## play station
+
 
 if is_station_playing "${STATION}" ; then
 	turn_off_station "${LINK}" "${STATION}"
