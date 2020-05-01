@@ -10,8 +10,8 @@ Some dependencies are needed...
 
 ## Dependencies
 
-* Any Multimedia Player (`mpv` is recommended and is the default one. `vlc` may also work - but it is not the one I recommend)
-* `youtube-dl` (which is for playing Youtube Live streams using `mpv`)
+* Any Multimedia Player (`mpv` or `vlc` or custom of choice)
+* `youtube-dl` (which is for playing Youtube Live streams)
 
 The rest of the dependencies you may already have on your Linux OS, which are:
 
@@ -80,11 +80,11 @@ Now you may use `radio-play chillhop` the next time you want to listen to your f
 
 ## Limitation
 
-`radio-play` in the future, will make a check to only accept online URL, but - when it does - it has no way to verify if the URL is referring to a playable URL (such as for example .ogg, .m3u, .mp3, .mpg). So, insert only URLs that the program in the variable `PLAYER_COMMAND` (locate in the `main.conf` configuration file. The default player program is `mpv`) accepts.
+`radio-play` in the future, will make a check to only accept online URL, but - when it does - it has no way to verify if the URL is referring to a playable URL (such as for example .ogg, .m3u, .mp3, .mpg). So, insert only URLs that the program in the variable `PLAYER_COMMAND` (locate in the `main.conf` configuration file) accepts.
 
 ## Conclusion
 
-I believe that is everything. I want you to be able to learn/edit/share this code with anyone, so for lack of knowledge of the licenses world, I will put this code under MIT license.  
+I believe that is everything. I want you to be able to learn/edit/share this code with anyone, so for lack of knowledge of the licenses world, I will put this code under MIT license.
 
 If you want to give me some gift for creating this code, or just want to say something to me, go to [my personal page](https://alexandre1985.github.io/) and you can contact me throw there (using the personal page contact form).
 

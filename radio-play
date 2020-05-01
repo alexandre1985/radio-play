@@ -25,9 +25,9 @@ RECORD_FILE=/tmp/radio-play-station
 ${MKDIR} -p "${SCRIPT_CONFIG_DIR}"
 
 create_config_main_file() {
-	printf 'PLAYER_COMMAND="/usr/bin/mpv --really-quiet --stop-playback-on-init-failure=yes"
+	printf 'PLAYER_COMMAND="/usr/bin/vlc --play-and-exit"
 
-PLAYER_NO_VIDEO_FLAG=--no-video
+PLAYER_NO_VIDEO_FLAG="-I dummy --no-video"
 
 
 # ALL PROGRAMS NEEDED FOR THIS SCRIPT TO WORK
@@ -131,7 +131,7 @@ play_no_video() {
 stop_play() {
 	local ESCAPED_INPUT="$(escape $1)"
 	
-	${PKILL} -PIPE -f "${ESCAPED_INPUT}" > /dev/null 2>&1 &
+	${PKILL} -f "${ESCAPED_INPUT}" > /dev/null 2>&1 &
 
 	# echo $(jobs -rp)
  #    wait $(jobs -rp) 2>/dev/null
@@ -220,6 +220,7 @@ remove_station_record() {
 }
 
 radio_ended() {
+    #stop_play "${1}"
 	remove_station_record
 	${RM} -f "${RECORD_FILE}"
 	notificate "END" "${1}"
