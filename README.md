@@ -1,3 +1,5 @@
+( this repository now lives at [https://gitlab.com/alexandre1985/radio-play/](https://gitlab.com/alexandre1985/radio-play/) )
+
 # radio-play
 
 ### it is a BASH Script to listen to any radio (including Youtube Live streams) on the background of your computer.
